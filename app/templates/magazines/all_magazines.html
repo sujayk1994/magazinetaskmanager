@@ -94,9 +94,15 @@
                             {{ "%.0f"|format(progress) }}%
                         </div>
                     </div>
+                    {% if user.role == 'cxo' %}
+                    <a href="{{ url_for('magazines.cxo_edition_detail', edition_id=item.edition.id) }}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-eye"></i> View CXO Tasks
+                    </a>
+                    {% else %}
                     <a href="{{ url_for('magazines.edition_detail', edition_id=item.edition.id) }}" class="btn btn-primary btn-sm">
                         <i class="bi bi-eye"></i> View Details
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

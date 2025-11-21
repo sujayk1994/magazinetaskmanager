@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app import db
-from app.models import Brand, Edition, Task
+from app.models import Brand, Edition, Task, CXOArticle
 from app.blueprints.auth import login_required, role_required, get_current_user
 from datetime import datetime
 
@@ -135,3 +135,48 @@ def update_edition_status(edition_id):
     
     flash('Edition status updated!', 'success')
     return redirect(url_for('magazines.edition_detail', edition_id=edition_id))
+
+@bp.route('/brands')
+@login_required
+def all_brands():
+    user = get_current_user()
+    
+    if user.role == 'sales' or (user.role in ['design', 'editorial'] and user.is_manager):
+        pass
+    else:
+        flash('You do not have permission to view this page.', 'danger')
+        return redirect(url_for('main.dashboard'))
+    
+    brands = Brand.query.order_by(Brand.name).all()
+    
+    brand_data = []
+    for brand in brands:
+        edition_count = Edition.query.filter_by(brand_id=brand.id).count()
+        task_count = Task.query.filter_by(brand_id=brand.id).count()
+        
+        brand_data.append({
+            'brand': brand,
+            'edition_count': edition_count,
+            'task_count': task_count
+        })
+    
+    return render_template('magazines/all_brands.html',
+                         user=user,
+                         brand_data=brand_data)
+
+@bp.route('/cxo/edition/<int:edition_id>')
+@login_required
+@role_required('cxo')
+def cxo_edition_detail(edition_id):
+    user = get_current_user()
+    edition = Edition.query.get_or_404(edition_id)
+    
+    cxo_tasks = Task.query.filter(
+        Task.edition_id == edition_id,
+        Task.category == 'cxo_article'
+    ).all()
+    
+    return render_template('magazines/cxo_edition_detail.html',
+                         user=user,
+                         edition=edition,
+                         tasks=cxo_tasks)

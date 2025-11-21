@@ -61,12 +61,15 @@
         </div>
     </div>
 
-    <div class="card">
+    {% set general_tasks = tasks|rejectattr('category', 'equalto', 'cxo_article')|list %}
+    {% set cxo_tasks = tasks|selectattr('category', 'equalto', 'cxo_article')|list %}
+
+    <div class="card mb-4">
         <div class="card-header bg-info text-white">
-            <h5 class="mb-0">Tasks in This Edition</h5>
+            <h5 class="mb-0"><i class="bi bi-list-task"></i> General Tasks</h5>
         </div>
         <div class="card-body">
-            {% if tasks %}
+            {% if general_tasks %}
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -81,7 +84,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for task in tasks %}
+                        {% for task in general_tasks %}
                         <tr>
                             <td><strong>#{{ task.id }}</strong></td>
                             <td>{{ task.company_name or 'N/A' }}</td>
@@ -110,7 +113,61 @@
                 </table>
             </div>
             {% else %}
-            <p class="text-muted">No tasks in this edition yet.</p>
+            <p class="text-muted">No general tasks in this edition yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0"><i class="bi bi-star-fill"></i> CXO Tasks</h5>
+        </div>
+        <div class="card-body">
+            {% if cxo_tasks %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Task ID</th>
+                            <th>Company</th>
+                            <th>Assigned To</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Deadline</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in cxo_tasks %}
+                        <tr>
+                            <td><strong>#{{ task.id }}</strong></td>
+                            <td>{{ task.company_name or 'N/A' }}</td>
+                            <td>{{ task.assigned_user.username if task.assigned_user else 'Unassigned' }}</td>
+                            <td><span class="badge bg-warning text-dark">{{ task.current_department }}</span></td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if task.status == 'completed' else 'primary' }}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if task.deadline %}
+                                {{ task.deadline.strftime('%Y-%m-%d') }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No CXO tasks in this edition yet.</p>
             {% endif %}
         </div>
     </div>
