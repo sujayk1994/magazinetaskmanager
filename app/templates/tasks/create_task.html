@@ -40,8 +40,30 @@
                     </div>
                     
                     <div class="col-md-6 mb-3">
-                        <label for="company_website" class="form-label">Company Website</label>
-                        <input type="url" class="form-control" id="company_website" name="company_website">
+                        <label for="company_url" class="form-label">Company Website</label>
+                        <input type="url" class="form-control" id="company_url" name="company_url">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">Select Category</option>
+                            <option value="cover">Cover</option>
+                            <option value="profile">Profile</option>
+                            <option value="coy">COY</option>
+                            <option value="cmoy">CMOY</option>
+                            <option value="case_study">Case Study</option>
+                            <option value="intro">Intro</option>
+                            <option value="editorial">Editorial</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3" id="category_other_container" style="display: none;">
+                        <label for="category_other" class="form-label">Specify Other Category</label>
+                        <input type="text" class="form-control" id="category_other" name="category_other">
                     </div>
                 </div>
 
@@ -87,4 +109,19 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category');
+    const categoryOtherContainer = document.getElementById('category_other_container');
+    
+    categorySelect.addEventListener('change', function() {
+        if (this.value === 'other') {
+            categoryOtherContainer.style.display = 'block';
+        } else {
+            categoryOtherContainer.style.display = 'none';
+        }
+    });
+});
+</script>
 {% endblock %}

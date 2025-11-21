@@ -24,10 +24,24 @@
                             <td>{{ task.company_name or 'N/A' }}</td>
                         </tr>
                         <tr>
-                            <th>Website:</th>
+                            <th>Company URL:</th>
                             <td>
-                                {% if task.company_website %}
-                                <a href="{{ task.company_website }}" target="_blank">{{ task.company_website }}</a>
+                                {% if task.company_url %}
+                                <a href="{{ task.company_url }}" target="_blank">{{ task.company_url }}</a>
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Category:</th>
+                            <td>
+                                {% if task.category %}
+                                    {% if task.category == 'other' and task.category_other %}
+                                        <span class="badge bg-secondary">{{ task.category_other }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ task.category|title }}</span>
+                                    {% endif %}
                                 {% else %}
                                 N/A
                                 {% endif %}

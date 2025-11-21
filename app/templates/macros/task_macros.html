@@ -5,12 +5,13 @@
     <td>{{ task.edition.brand.name if task.edition and task.edition.brand else (task.brand.name if task.brand else 'N/A') }}</td>
     <td>
         {% if task.category %}
-        <span class="badge bg-secondary">{{ task.category }}</span>
-        {% if task.category == 'Other' and task.category_other %}
-        <br><small class="text-muted">{{ task.category_other }}</small>
-        {% endif %}
+            {% if task.category == 'other' and task.category_other %}
+                <span class="badge bg-secondary">{{ task.category_other }}</span>
+            {% else %}
+                <span class="badge bg-secondary">{{ task.category|title }}</span>
+            {% endif %}
         {% else %}
-        <span class="text-muted">-</span>
+            <span class="text-muted">-</span>
         {% endif %}
     </td>
     <td>
@@ -76,9 +77,10 @@
                 {% if task.category %}
                 <p class="mb-1">
                     <small><strong>Category:</strong></small>
-                    <span class="badge bg-secondary ms-1">{{ task.category }}</span>
-                    {% if task.category == 'Other' and task.category_other %}
-                    <br><small class="text-muted ms-5">{{ task.category_other }}</small>
+                    {% if task.category == 'other' and task.category_other %}
+                        <span class="badge bg-secondary ms-1">{{ task.category_other }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary ms-1">{{ task.category|title }}</span>
                     {% endif %}
                 </p>
                 {% endif %}
@@ -126,7 +128,11 @@
                 <h6 class="mb-0">
                     <strong>#{{ task.id }}</strong> - {{ task.company_name or 'Untitled Task' }}
                     {% if task.category %}
-                    <span class="badge bg-secondary ms-2">{{ task.category }}</span>
+                        {% if task.category == 'other' and task.category_other %}
+                            <span class="badge bg-secondary ms-2">{{ task.category_other }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary ms-2">{{ task.category|title }}</span>
+                        {% endif %}
                     {% endif %}
                 </h6>
                 <span class="badge bg-{{ 'success' if task.status == 'Completed' else 'warning' if task.status == 'In Progress' else 'primary' if task.status == 'Assigned' else 'secondary' }}">
