@@ -34,14 +34,14 @@ echo ""
 echo "🗄️  Setting up database migrations..."
 if [ ! -d "migrations" ]; then
     echo "Initializing Flask-Migrate..."
-    flask db init
+    python -m flask db init
 fi
 echo "✅ Migrations initialized"
 echo ""
 
 # Step 4: Run database migrations (idempotent - safe to run multiple times)
 echo "📊 Running database migrations..."
-flask db upgrade 2>&1 | grep -v "INFO" || true
+python -m flask db upgrade 2>&1 | grep -v "INFO" || true
 echo "✅ Database is up to date"
 echo ""
 
