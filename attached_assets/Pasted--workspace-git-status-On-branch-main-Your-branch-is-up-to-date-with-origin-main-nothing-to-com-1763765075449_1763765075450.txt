@@ -1,0 +1,131 @@
+~/workspace$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+~/workspace$ ls -R .
+.:
+app                      Dockerfile                           seed_data_comprehensive.py
+APP_WORKFLOW_SUMMARY.md  generated-icon.png                   seed_data_new.py
+attached_assets          main.py                              seed_data.py
+clear_and_seed_tasks.py  migrations                           setup_and_run.sh
+clear_content.py         __pycache__                          SETUP_INSTRUCTIONS.md
+codespace_setup.sh       pyproject.toml                       startup.sh
+COMMANDS.md              README.md                            TASK_ROUTING_LOGIC.md
+config.py                replit.md                            TECHNICAL_DOCUMENTATION.md
+DEPLOYMENT_GUIDE.md      requirements.txt                     USER_GUIDE.md
+docker-compose.yml       seed_comprehensive_with_managers.py  uv.lock
+
+./app:
+blueprints  __init__.py  models.py  __pycache__  static  templates
+
+./app/blueprints:
+ads.py  auth.py  cxo.py  __init__.py  magazines.py  main.py  __pycache__  tasks.py
+
+./app/blueprints/__pycache__:
+ads.cpython-311.pyc   cxo.cpython-311.pyc       magazines.cpython-311.pyc  tasks.cpython-311.pyc
+auth.cpython-311.pyc  __init__.cpython-311.pyc  main.cpython-311.pyc
+
+./app/__pycache__:
+__init__.cpython-311.pyc  models.cpython-311.pyc
+
+./app/static:
+css  js  uploads
+
+./app/static/css:
+style.css
+
+./app/static/js:
+main.js
+
+./app/static/uploads:
+ads  cxo_articles  tasks
+
+./app/static/uploads/ads:
+41_1763722417.54796_Sales_Metrics_Whiteboard.pdf  brand_3_3_banner.jpg
+brand_1_12_ad_design_1.jpg                        brand_3_5_ad_final.psd
+brand_1_14_poster.pdf                             brand_4_10_poster.pdf
+brand_1_1_ad_final.psd                            brand_4_11_banner.jpg
+brand_1_23_banner.jpg                             brand_4_16_poster.pdf
+brand_1_6_poster.pdf                              brand_4_17_ad_final.psd
+brand_1_9_ad_final.psd                            brand_4_18_poster.pdf
+brand_2_13_banner.jpg                             brand_4_24_poster.pdf
+brand_2_7_banner.jpg                              brand_4_2_ad_design_2.png
+brand_2_8_ad_design_2.png                         brand_4_4_poster.pdf
+brand_3_0_ad_final.psd                            brand_5_20_ad_final.psd
+brand_3_15_ad_design_2.png                        brand_5_21_banner.jpg
+brand_3_19_banner.jpg                             brand_5_22_banner.jpg
+
+./app/static/uploads/cxo_articles:
+
+./app/static/uploads/tasks:
+task_10_0_logo.png               task_18_1_approved_content.docx  task_4_0_requirements.pdf
+task_1_0_approved_content.docx   task_18_2_notes.txt              task_5_0_approved_content.docx
+task_11_0_reference_image.jpg    task_19_0_final_layout.pdf       task_5_1_specifications.txt
+task_12_0_logo.png               task_19_1_specifications.txt     task_5_2_final_layout.pdf
+task_12_1_approved_content.docx  task_19_2_specifications.txt     task_6_0_requirements.pdf
+task_13_0_design_brief.doc       task_20_0_reference_image.jpg    task_6_1_design_brief.doc
+task_13_1_design_brief.doc       task_20_1_reference_image.jpg    task_6_2_final_layout.pdf
+task_14_0_specifications.txt     task_20_2_final_layout.pdf       task_7_0_notes.txt
+task_14_1_logo.png               task_2_0_design_brief.doc        task_7_1_final_layout.pdf
+task_15_0_reference_image.jpg    task_2_1_design_brief.doc        task_8_0_logo.png
+task_16_0_reference_image.jpg    task_3_0_logo.png                task_9_0_specifications.txt
+task_17_0_requirements.pdf       task_3_1_design_brief.doc        task_9_1_requirements.pdf
+task_18_0_design_brief.doc       task_3_2_requirements.pdf
+
+./app/templates:
+ads   base.html  cxo_dashboard.html  index.html  magazines               tasks
+auth  cxo        dashboard.html      macros      manager_dashboard.html
+
+./app/templates/ads:
+all_ads.html  upload_ad.html
+
+./app/templates/auth:
+login.html
+
+./app/templates/cxo:
+all_articles.html  article_detail.html  edit_article.html  upload_article.html
+
+./app/templates/macros:
+task_macros.html
+
+./app/templates/magazines:
+all_magazines.html  create_brand.html  create_edition.html  edition_detail.html
+
+./app/templates/tasks:
+all_tasks.html  create_task.html  my_tasks.html  open_tasks.html  task_detail.html
+
+./attached_assets:
+Pasted--PROJECT-DESCRIPTION-MAGAZINE-TASK-MANAGEMENT-APP-FLASK-PROTOTYPE-This-project-is-a-prototype--1763627995683_1763627995684.txt
+Pasted--PROJECT-DESCRIPTION-MAGAZINE-TASK-MANAGEMENT-APP-FLASK-PROTOTYPE-This-project-is-a-prototype--1763629756677_1763629756677.txt
+Pasted--sujayk1994-workspaces-magazinetaskmanager-main-chmod-x-startup-sh-sujayk1994-workspaces-1763763130551_1763763130552.txt
+Pasted--sujayk1994-workspaces-magazinetaskmanager-main-chmod-x-startup-sh-sujayk1994-workspaces-1763764230122_1763764230123.txt
+Pasted--sujayk1994-workspaces-magazinetaskmanager-main-startup-sh--1763763484490_1763763484490.txt
+Pasted--sujayk1994-workspaces-magazinetaskmanager-main-startup-sh--1763764364557_1763764364558.txt
+Pasted-The-To-Do-Home-UI-remove-the-duplicate-small-to-do-list-from-the-sidebar-Instead-keep-a-single--1763635785076_1763635785076.txt
+Pasted-The-To-Do-Home-UI-remove-the-duplicate-small-to-do-list-from-the-sidebar-Instead-keep-a-single--1763637536631_1763637536631.txt
+
+./migrations:
+alembic.ini  env.py  __pycache__  README  script.py.mako  versions
+
+./migrations/__pycache__:
+env.cpython-311.pyc
+
+./migrations/versions:
+126b14e153e3_add_task_ownership_columns.py           add_task_department_and_manager_fields.py
+9e4d1527b281_add_new_fields_and_cxoarticle_model.py  be5bbf15a53f_add_task_id_to_cxo_articles.py
+add_file_deletion_tracking.py                        c76bd2127030_add_cxo_article_files_table.py
+add_password_to_users.py                             __pycache__
+
+./migrations/versions/__pycache__:
+126b14e153e3_add_task_ownership_columns.cpython-311.pyc
+9e4d1527b281_add_new_fields_and_cxoarticle_model.cpython-311.pyc
+add_file_deletion_tracking.cpython-311.pyc
+add_password_to_users.cpython-311.pyc
+add_task_department_and_manager_fields.cpython-311.pyc
+be5bbf15a53f_add_task_id_to_cxo_articles.cpython-311.pyc
+c76bd2127030_add_cxo_article_files_table.cpython-311.pyc
+
+./__pycache__:
+config.cpython-311.pyc
+~/workspace$ 
