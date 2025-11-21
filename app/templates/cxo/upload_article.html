@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Upload CXO Article{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-12">
+            <h2><i class="bi bi-cloud-upload"></i> Upload CXO Article</h2>
+            <p class="text-muted">Submit articles for editorial review and approval</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="brand_id" class="form-label">Brand <span class="text-danger">*</span></label>
+                                <select class="form-select" id="brand_id" name="brand_id" required>
+                                    <option value="">Select Brand...</option>
+                                    {% for brand in brands %}
+                                    <option value="{{ brand.id }}">{{ brand.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="edition_id" class="form-label">Edition</label>
+                                <select class="form-select" id="edition_id" name="edition_id">
+                                    <option value="">Select Edition...</option>
+                                    {% for edition in editions %}
+                                    <option value="{{ edition.id }}">{{ edition.name }}</option>
+                                    {% endfor %}
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="edition_other_field" class="mb-3" style="display: none;">
+                            <label for="edition_other" class="form-label">Specify Other Edition</label>
+                            <input type="text" class="form-control" id="edition_other" name="edition_other" placeholder="Enter edition name">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="company_name" class="form-label">Company Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="company_name" name="company_name" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="contact_person_name" class="form-label">Contact Person Name</label>
+                                <input type="text" class="form-control" id="contact_person_name" name="contact_person_name">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="contact_person_designation" class="form-label">Contact Person Designation</label>
+                                <input type="text" class="form-control" id="contact_person_designation" name="contact_person_designation">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="company_url" class="form-label">Company Website URL</label>
+                            <input type="url" class="form-control" id="company_url" name="company_url" placeholder="https://example.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="files" class="form-label">Upload Files</label>
+                            <input type="file" class="form-control" id="files" name="files" multiple>
+                            <small class="text-muted">Accepted formats: PDF, DOC, DOCX, TXT, PNG, JPG, JPEG</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="comments" class="form-label">Comments</label>
+                            <textarea class="form-control" id="comments" name="comments" rows="4" placeholder="Add any additional notes or instructions..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="override_assign" name="override_assign">
+                                <label class="form-check-label" for="override_assign">
+                                    Assign to specific editor (override default)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="assign_to_field" class="mb-3" style="display: none;">
+                            <label for="assigned_to_id" class="form-label">Assign To</label>
+                            <select class="form-select" id="assigned_to_id" name="assigned_to_id">
+                                <option value="">Select Editor...</option>
+                                {% for editor in editors %}
+                                <option value="{{ editor.id }}">{{ editor.username }} ({{ editor.role|capitalize }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('cxo.all_articles') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-cloud-upload"></i> Upload Article
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-info-circle"></i> Submission Guidelines</h5>
+                    <ul class="small">
+                        <li>All fields marked with <span class="text-danger">*</span> are required</li>
+                        <li>Articles will be reviewed by the editorial team</li>
+                        <li>You can assign to a specific editor or let the system auto-assign</li>
+                        <li>Track your article status in the CXO Articles list</li>
+                        <li>Approved articles will be routed to Design for layout</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('edition_id').addEventListener('change', function() {
+    const otherField = document.getElementById('edition_other_field');
+    if (this.value === 'other') {
+        otherField.style.display = 'block';
+    } else {
+        otherField.style.display = 'none';
+    }
+});
+
+document.getElementById('override_assign').addEventListener('change', function() {
+    const assignField = document.getElementById('assign_to_field');
+    if (this.checked) {
+        assignField.style.display = 'block';
+    } else {
+        assignField.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Article #{{ article.id }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('cxo.all_articles') }}">CXO Articles</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('cxo.article_detail', article_id=article.id) }}">Article #{{ article.id }}</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
+            <h2><i class="bi bi-pencil-square"></i> Edit Article #{{ article.id }}</h2>
+            <p class="text-muted">Update article details, brand, edition, and assignments</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="brand_id" class="form-label">Brand <span class="text-danger">*</span></label>
+                                <select class="form-select" id="brand_id" name="brand_id" required>
+                                    <option value="">Select Brand...</option>
+                                    {% for brand in brands %}
+                                    <option value="{{ brand.id }}" {% if article.brand_id == brand.id %}selected{% endif %}>{{ brand.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="edition_id" class="form-label">Edition</label>
+                                <select class="form-select" id="edition_id" name="edition_id">
+                                    <option value="">Select Edition...</option>
+                                    {% for edition in editions %}
+                                    <option value="{{ edition.id }}" {% if article.edition_id == edition.id %}selected{% endif %}>{{ edition.name }}</option>
+                                    {% endfor %}
+                                    <option value="other" {% if article.edition_id is none and article.edition_other %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="edition_other_field" class="mb-3" {% if not (article.edition_id is none and article.edition_other) %}style="display: none;"{% endif %}>
+                            <label for="edition_other" class="form-label">Specify Other Edition</label>
+                            <input type="text" class="form-control" id="edition_other" name="edition_other" placeholder="Enter edition name" value="{{ article.edition_other or '' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="company_name" class="form-label">Company Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="company_name" name="company_name" value="{{ article.company_name }}" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="contact_person_name" class="form-label">Contact Person Name</label>
+                                <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" value="{{ article.contact_person_name or '' }}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="contact_person_designation" class="form-label">Contact Person Designation</label>
+                                <input type="text" class="form-control" id="contact_person_designation" name="contact_person_designation" value="{{ article.contact_person_designation or '' }}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="company_url" class="form-label">Company Website URL</label>
+                            <input type="url" class="form-control" id="company_url" name="company_url" placeholder="https://example.com" value="{{ article.company_url or '' }}">
+                        </div>
+
+                        {% if article.comments %}
+                        <div class="mb-3">
+                            <label class="form-label">Article History (Read-Only)</label>
+                            <div class="p-3 bg-light rounded border" style="max-height: 200px; overflow-y: auto;">
+                                <pre class="mb-0 small">{{ article.comments }}</pre>
+                            </div>
+                            <small class="text-muted">This field contains the article's history and cannot be edited.</small>
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="assigned_to_id" class="form-label">Assign To Editor (optional)</label>
+                            <select class="form-select" id="assigned_to_id" name="assigned_to_id">
+                                <option value="">Unassigned</option>
+                                {% for editor in editors %}
+                                <option value="{{ editor.id }}" {% if article.assigned_to_id == editor.id %}selected{% endif %}>{{ editor.username }} ({{ editor.role|capitalize }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <small><i class="bi bi-info-circle"></i> Note: File uploads cannot be edited. The original files will remain attached to this article.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('cxo.article_detail', article_id=article.id) }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-info-circle"></i> Edit Guidelines</h5>
+                    <ul class="small">
+                        <li>Only unused articles can be edited</li>
+                        <li>All fields marked with <span class="text-danger">*</span> are required</li>
+                        <li>You can reassign the article to a different editor</li>
+                        <li>Changes will be tracked in the article history</li>
+                        <li>File uploads cannot be modified through this form</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="bi bi-clock-history"></i> Article Info</h6>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-2"><strong>ID:</strong> #{{ article.id }}</p>
+                    <p class="small mb-2"><strong>Status:</strong> 
+                        <span class="badge bg-{{ 'success' if article.status == 'Approved' else 'warning' if article.status == 'Pending' else 'danger' }}">{{ article.status }}</span>
+                    </p>
+                    <p class="small mb-2"><strong>Uploaded:</strong> {{ article.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p class="small mb-0"><strong>Last Updated:</strong> {{ article.updated_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('edition_id').addEventListener('change', function() {
+    const otherField = document.getElementById('edition_other_field');
+    if (this.value === 'other') {
+        otherField.style.display = 'block';
+    } else {
+        otherField.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

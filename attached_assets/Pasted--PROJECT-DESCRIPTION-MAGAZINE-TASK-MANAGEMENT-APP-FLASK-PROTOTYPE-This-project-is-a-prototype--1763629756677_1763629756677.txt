@@ -1,0 +1,319 @@
+✅ PROJECT DESCRIPTION – MAGAZINE TASK MANAGEMENT APP (FLASK PROTOTYPE)
+
+This project is a prototype task-management web app built using Python + Flask. It is designed for a magazine company that works with three departments:
+
+Sales
+
+Editorial
+
+Design
+
+Each department will have its own dashboard, but all dashboards will share the same overall layout.
+
+🔵 Core Concept
+
+The company manages multiple brands, and each brand contains multiple editions (monthly/yearly issues).
+Brands and editions are created in advance, but the Sales Manager must also have the ability to create new brands and editions.
+
+The system allows Sales → Editorial → Design → Sales workflow with full back-and-forth task movement.
+
+🔵 Task Workflow
+1. Task Creation (By Sales Department)
+
+When a sales deal is closed, the Sales team creates a new task.
+
+Every task must be associated with an Edition (selected from a dropdown).
+
+For rare cases, include an option for “No Edition Assigned” (exception case).
+
+Sales uploads the required reference materials (documents, images, audio, PDFs).
+
+The task is then assigned to a member of the Editorial department.
+
+Sales also sets an optional priority/target date.
+
+2. Editorial Workflow
+
+Editorial sees the task in their To-Do list with notifications.
+
+After completing the content, Editorial:
+
+Uploads output files.
+
+Either sends it to Design for layout/design OR
+
+Sends it back to Sales for client review.
+
+3. Design Workflow
+
+Design receives the task if Editorial chooses “Send to Design.”
+
+After designing, they upload files and:
+
+Send to Editorial for proofreading OR
+
+Send back to Sales for client feedback.
+
+4. Sales Feedback & Looping
+
+Sales reviews client feedback.
+
+They can reassign back to Editorial.
+
+Editorial can send back to Design.
+
+Design can send to Editorial again.
+
+This loop can repeat any number of times.
+
+5. Task Completion
+
+Once the final material is approved, Sales marks the task as Completed.
+
+Every action and file uploaded is stored in the Task History.
+
+🔵 Task History
+
+Each task has a dedicated history page containing:
+
+Who created the task
+
+Every status update (with timestamps)
+
+All uploaded files at each step
+
+Ability to download files
+
+Comments and notes
+
+🔵 Dashboard Structure
+
+All three departments share the same dashboard layout:
+
+Dashboard Layout Includes:
+
+To-Do Window (list of all assigned tasks)
+
+Calendar (shows deadlines and task dates)
+
+Recent Tasks Window
+
+Sidebar Menu with:
+
+Home
+
+All Tasks
+
+All Magazines
+
+All Ads
+
+All Articles
+
+🔵 Pages & Features
+1. All Tasks Page
+
+A searchable, filterable list of all tasks in the database.
+
+Columns:
+
+Task ID (auto-generated)
+
+Date
+
+Brand (dropdown during task creation)
+
+Edition / Category (dropdown)
+
+Deadline (optional date)
+
+Company Name (input)
+
+Company Website (input)
+
+Comments (input)
+
+Upload / Download buttons
+
+Assign To (dropdown)
+
+Additional Features:
+
+Search
+
+Sort
+
+Filters for brand, edition, category, year, deadline
+
+Clicking a task opens Task History
+
+2. All Magazines Page
+
+Displays all editions of all brands in card view.
+
+Each card includes:
+
+Brand name
+
+Edition name
+
+Status dropdown:
+(Scheduled, Ongoing, Hold, Canceled, Completed, Online, Printed, Shipped)
+
+Number of tasks inside the edition
+
+Colour-coded based on status
+
+Card click:
+
+Shows all tasks associated with that edition + their statuses.
+When all tasks are marked complete, the Design team marks the edition as “Shipped.”
+
+3. All Ads Page
+
+Folder-style structure with brands as folders.
+
+Sales uploads ads into the appropriate brand folder.
+
+Inside each brand folder:
+
+Filter by upload date
+
+Search by file name
+
+Assign ad to a particular edition
+
+Editorial, Design, and Sales can all access this page.
+
+4. All Articles Page
+
+This page involves the CXO Department and will be defined later.
+
+✅ ROADMAP FOR DEVELOPMENT (FLASK)
+Phase 1 — Setup
+
+Initialize Flask project structure
+
+Create virtual environment & install dependencies
+
+Configure SQLite or PostgreSQL
+
+Create basic templates & Bootstrap layout
+
+Phase 2 — Database Models
+
+Create SQLAlchemy models for:
+
+Users (roles: Sales, Editorial, Design, Manager, etc.)
+
+Brands
+
+Editions
+
+Tasks
+
+TaskFiles
+
+TaskHistory
+
+Ads
+
+Permissions / Roles
+
+Notifications
+
+Phase 3 — Authentication & Roles
+
+Login system
+
+Role-based access control
+
+Redirect to correct dashboard based on department
+
+Phase 4 — Dashboard UI
+
+Shared dashboard layout
+
+To-Do widget
+
+Calendar widget
+
+Recent tasks section
+
+Sidebar menu
+
+Phase 5 — Task Creation & Assignment
+
+Form for Sales to create tasks
+
+Associate with brand + edition
+
+File upload for reference materials
+
+Assign to Editorial user
+
+Create first TaskHistory entry
+
+Phase 6 — Department Workflows
+
+Editorial: upload output & send to Design or Sales
+
+Design: upload designs & send to Editorial or Sales
+
+Sales: review, reassign, mark completed
+
+Notification system
+
+TaskHistory entries for every step
+
+Phase 7 — All Tasks Page
+
+Full table list of tasks
+
+Filters, search, sort
+
+Ability to open Task History
+
+Upload/Download inside task
+
+Phase 8 — Magazines & Editions Management
+
+Page to view all brands & editions
+
+Create new brand & edition (Sales Manager only)
+
+Buttons showing no. of tasks in each edition
+
+Edition status update (Scheduled → Shipped)
+
+Edition details page listing tasks
+
+Phase 9 — Ads Module
+
+Folder-like brand → ads structure
+
+File uploads
+
+Date-based filter
+
+Search
+
+Assign ads to editions
+
+Phase 10 — Articles Module
+
+Placeholder for CXO tasks
+
+To be defined later
+
+Phase 11 — UI Polish & Testing
+
+Improve UI
+
+Add colour-coded cards
+
+Responsiveness
+
+Final testing
+
+Performance optimization

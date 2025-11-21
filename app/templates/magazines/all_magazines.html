@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}All Magazines - Magazine Manager{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-book"></i> All Magazines</h2>
+        {% if user.role in ['sales', 'manager'] %}
+        <div>
+            <a href="{{ url_for('magazines.create_brand') }}" class="btn btn-primary me-2">
+                <i class="bi bi-plus-square"></i> Create Brand
+            </a>
+            <a href="{{ url_for('magazines.create_edition') }}" class="btn btn-success">
+                <i class="bi bi-plus-square"></i> Create Edition
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('magazines.all_magazines') }}" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label"><i class="bi bi-search"></i> Search</label>
+                    <input type="text" class="form-control" name="search" placeholder="Search brand or edition..." value="{{ request.args.get('search', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label"><i class="bi bi-tag"></i> Brand</label>
+                    <select class="form-select" name="brand">
+                        <option value="">All Brands</option>
+                        {% for brand in brands %}
+                        <option value="{{ brand.id }}" {% if request.args.get('brand') == brand.id|string %}selected{% endif %}>{{ brand.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><i class="bi bi-flag"></i> Status</label>
+                    <select class="form-select" name="status">
+                        <option value="">All Statuses</option>
+                        {% for status in statuses %}
+                        <option value="{{ status }}" {% if request.args.get('status') == status %}selected{% endif %}>{{ status }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><i class="bi bi-calendar"></i> Year</label>
+                    <select class="form-select" name="year">
+                        <option value="">All Years</option>
+                        {% for year in years %}
+                        <option value="{{ year }}" {% if request.args.get('year') == year|string %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Filter</button>
+                        <a href="{{ url_for('magazines.all_magazines') }}" class="btn btn-secondary btn-sm">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if magazine_data %}
+    <div class="row">
+        {% for item in magazine_data %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-{{ 'success' if item.edition.status == 'Shipped' else 'warning' if item.edition.status == 'Ongoing' else 'secondary' }}">
+                <div class="card-header bg-{{ 'success' if item.edition.status == 'Shipped' else 'warning' if item.edition.status == 'Ongoing' else 'secondary' }} text-white">
+                    <h5 class="mb-0">{{ item.brand.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title">{{ item.edition.name }}</h6>
+                    <p class="card-text">
+                        {% if item.edition.year and item.edition.month %}
+                        <small class="text-muted">{{ item.edition.month }}/{{ item.edition.year }}</small>
+                        {% endif %}
+                    </p>
+                    <div class="mb-3">
+                        <span class="badge bg-info">{{ item.task_count }} Total Tasks</span>
+                        <span class="badge bg-success">{{ item.completed_tasks }} Completed</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Status:</strong>
+                        <span class="badge bg-{{ 'success' if item.edition.status == 'Shipped' else 'warning' if item.edition.status == 'Ongoing' else 'secondary' }}">
+                            {{ item.edition.status }}
+                        </span>
+                    </div>
+                    <div class="progress mb-3" style="height: 25px;">
+                        {% set progress = (item.completed_tasks / item.task_count * 100) if item.task_count > 0 else 0 %}
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%">
+                            {{ "%.0f"|format(progress) }}%
+                        </div>
+                    </div>
+                    <a href="{{ url_for('magazines.edition_detail', edition_id=item.edition.id) }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> No editions found. Create a brand and edition to get started.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

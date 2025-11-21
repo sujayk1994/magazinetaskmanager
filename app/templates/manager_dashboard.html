@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Manager Dashboard - Magazine Manager{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-clipboard-check"></i> Manager Dashboard - {{ user.department.capitalize() }} Department</h2>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to My Dashboard
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-primary">{{ stats.total_department_tasks }}</h3>
+                    <small class="text-muted">Total Active Tasks</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-warning">{{ stats.open_tasks }}</h3>
+                    <small class="text-muted">Open Tasks</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-success">{{ stats.assigned_tasks }}</h3>
+                    <small class="text-muted">Assigned Tasks</small>
+                </div>
+            </div>
+        </div>
+        {% if user.department == 'editorial' %}
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-info">{{ stats.pending_articles }}</h3>
+                    <small class="text-muted">Pending Articles</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-danger">{{ stats.urgent_priority }}</h3>
+                    <small class="text-muted">Urgent</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-orange">{{ stats.high_priority }}</h3>
+                    <small class="text-muted">High Priority</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-info">{{ stats.team_members }}</h3>
+                    <small class="text-muted">Team Members</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if user.department == 'editorial' and pending_articles %}
+    <div class="alert alert-info mb-4">
+        <h5><i class="bi bi-journal-richtext"></i> Pending CXO Articles for Approval ({{ pending_articles|length }})</h5>
+        <p class="mb-2">You have {{ pending_articles|length }} CXO article(s) waiting for your review and approval.</p>
+        <div class="list-group">
+            {% for article in pending_articles[:5] %}
+            <a href="{{ url_for('cxo.article_detail', article_id=article.id) }}" class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ article.company_name }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            Uploaded by {{ article.uploaded_by.username }} - {{ article.uploaded_at.strftime('%Y-%m-%d') }}
+                            {% if article.brand %} | Brand: {{ article.brand.name }}{% endif %}
+                        </small>
+                    </div>
+                    <span class="badge bg-warning">Pending Review</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% if pending_articles|length > 5 %}
+        <div class="text-center mt-2">
+            <a href="{{ url_for('cxo.all_articles') }}?status=Pending" class="btn btn-sm btn-primary">View All {{ pending_articles|length }} Pending Articles</a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="bi bi-list-task"></i> Department Tasks ({{ dept_tasks|length }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if dept_tasks %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Assigned To</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Deadline</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in dept_tasks %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}">
+                                            <strong>#{{ task.id }}</strong> - {{ task.company_name or 'N/A' }}
+                                        </a>
+                                        {% if task.edition %}
+                                        <br><small class="text-muted">{{ task.edition.brand.name }} - {{ task.edition.name }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if task.assigned_to %}
+                                        <span class="badge bg-secondary">{{ task.assigned_to.username }}</span>
+                                        {% else %}
+                                        <span class="badge bg-warning">Unassigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if task.priority == 'urgent' %}
+                                        <span class="badge bg-danger">Urgent</span>
+                                        {% elif task.priority == 'high' %}
+                                        <span class="badge bg-warning">High</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Normal</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ task.status }}</span>
+                                    </td>
+                                    <td>
+                                        {% if task.deadline %}
+                                        <small>{{ task.deadline.strftime('%Y-%m-%d') }}</small>
+                                        {% else %}
+                                        <small class="text-muted">No deadline</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-4">No active tasks in your department.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-inbox"></i> Open Tasks ({{ open_tasks|length }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if open_tasks %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Priority</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in open_tasks %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}">
+                                            <strong>#{{ task.id }}</strong> - {{ task.company_name or 'N/A' }}
+                                        </a>
+                                        {% if task.edition %}
+                                        <br><small class="text-muted">{{ task.edition.brand.name }} - {{ task.edition.name }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if task.priority == 'urgent' %}
+                                        <span class="badge bg-danger">Urgent</span>
+                                        {% elif task.priority == 'high' %}
+                                        <span class="badge bg-warning">High</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Normal</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ task.created_at.strftime('%Y-%m-%d') }}</small>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> View & Assign
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-4">No open tasks available for assignment.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-people"></i> Team Workload</h5>
+                </div>
+                <div class="card-body">
+                    {% if team_workload %}
+                    <div class="list-group">
+                        {% for member_data in team_workload %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ member_data.user.username }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ member_data.user.email }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <h5 class="mb-0">
+                                        {% if member_data.active_tasks > 5 %}
+                                        <span class="badge bg-danger">{{ member_data.active_tasks }}</span>
+                                        {% elif member_data.active_tasks > 2 %}
+                                        <span class="badge bg-warning">{{ member_data.active_tasks }}</span>
+                                        {% else %}
+                                        <span class="badge bg-success">{{ member_data.active_tasks }}</span>
+                                        {% endif %}
+                                    </h5>
+                                    <small class="text-muted">active tasks</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-4">No team members in your department.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-info-circle"></i> Manager Controls</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('tasks.all_tasks') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-list"></i> View All Tasks
+                        </a>
+                        <a href="{{ url_for('tasks.create_task') }}" class="btn btn-outline-success">
+                            <i class="bi bi-plus-circle"></i> Create New Task
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-lightbulb"></i> Quick Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="small">
+                        <li>Tasks assigned to your department come to you by default</li>
+                        <li>Reassign tasks to team members as needed</li>
+                        <li>Open tasks can be picked up by any team member</li>
+                        <li>Design tasks return to original editorial requester when completed</li>
+                        <li>As a manager, you can override the design workflow and mark tasks as complete</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

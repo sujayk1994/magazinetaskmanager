@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block guest_content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-md-6 text-center">
+            <h1 class="display-4 mb-4">
+                <i class="bi bi-journal-text"></i> Magazine Task Management
+            </h1>
+            <p class="lead mb-4">
+                Streamline your workflow across Sales, Editorial, and Design departments
+            </p>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Login with Replit
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% macro task_row_table(task, user, show_actions=true) %}
+<tr class="task-row">
+    <td><strong><a href="{{ url_for('tasks.task_detail', task_id=task.id) }}">#{{ task.id }}</a></strong></td>
+    <td>{{ task.created_at.strftime('%Y-%m-%d') }}</td>
+    <td>{{ task.edition.brand.name if task.edition and task.edition.brand else (task.brand.name if task.brand else 'N/A') }}</td>
+    <td>
+        {% if task.category %}
+        <span class="badge bg-secondary">{{ task.category }}</span>
+        {% if task.category == 'Other' and task.category_other %}
+        <br><small class="text-muted">{{ task.category_other }}</small>
+        {% endif %}
+        {% else %}
+        <span class="text-muted">-</span>
+        {% endif %}
+    </td>
+    <td>
+        {{ task.company_name or '-' }}
+        {% if task.company_url %}
+        <br><small><a href="{{ task.company_url }}" target="_blank"><i class="bi bi-link-45deg"></i> URL</a></small>
+        {% endif %}
+    </td>
+    <td>
+        {% if task.deadline %}
+        <span class="badge bg-warning text-dark">{{ task.deadline.strftime('%Y-%m-%d') }}</span>
+        {% else %}
+        <span class="text-muted">-</span>
+        {% endif %}
+    </td>
+    <td>
+        {% if task.description %}
+        <small class="text-muted">{{ task.description[:50] }}{% if task.description|length > 50 %}...{% endif %}</small>
+        {% else %}
+        <span class="text-muted">-</span>
+        {% endif %}
+    </td>
+    <td>
+        <span class="badge bg-{{ 'success' if task.status == 'Completed' else 'warning' if task.status == 'In Progress' else 'primary' if task.status == 'Assigned' else 'secondary' }}">
+            {{ task.status }}
+        </span>
+    </td>
+    {% if show_actions %}
+    <td>
+        <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn btn-sm btn-outline-primary" title="View Details">
+            <i class="bi bi-eye"></i>
+        </a>
+        {% if task.status != 'Completed' %}
+            {% if task.assigned_to_id is none and user.role in ['editorial', 'design'] %}
+            <form method="post" action="{{ url_for('tasks.pickup_task', task_id=task.id) }}" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-success" title="Pickup this task">
+                    <i class="bi bi-hand-thumbs-up"></i>
+                </button>
+            </form>
+            {% endif %}
+        {% endif %}
+    </td>
+    {% endif %}
+</tr>
+{% endmacro %}
+
+{% macro task_card(task, user, show_actions=true) %}
+<div class="card task-card mb-3 {% if task.status == 'Completed' %}border-success{% elif task.priority == 'urgent' %}border-danger{% endif %}">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <strong><a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="text-decoration-none">#{{ task.id }}</a></strong>
+            <span class="ms-2">{{ task.company_name or 'No Company' }}</span>
+        </div>
+        <span class="badge bg-{{ 'success' if task.status == 'Completed' else 'warning' if task.status == 'In Progress' else 'primary' if task.status == 'Assigned' else 'secondary' }}">
+            {{ task.status }}
+        </span>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-1"><small><strong>Created:</strong> {{ task.created_at.strftime('%Y-%m-%d') }}</small></p>
+                <p class="mb-1"><small><strong>Brand:</strong> {{ task.edition.brand.name if task.edition and task.edition.brand else (task.brand.name if task.brand else 'N/A') }}</small></p>
+                {% if task.category %}
+                <p class="mb-1">
+                    <small><strong>Category:</strong></small>
+                    <span class="badge bg-secondary ms-1">{{ task.category }}</span>
+                    {% if task.category == 'Other' and task.category_other %}
+                    <br><small class="text-muted ms-5">{{ task.category_other }}</small>
+                    {% endif %}
+                </p>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if task.company_url %}
+                <p class="mb-1"><small><strong>URL:</strong> <a href="{{ task.company_url }}" target="_blank">{{ task.company_url[:30] }}...</a></small></p>
+                {% endif %}
+                {% if task.deadline %}
+                <p class="mb-1"><small><strong>Deadline:</strong> <span class="badge bg-warning text-dark">{{ task.deadline.strftime('%Y-%m-%d') }}</span></small></p>
+                {% endif %}
+            </div>
+        </div>
+        {% if task.description %}
+        <hr class="my-2">
+        <p class="card-text text-muted small mb-0">
+            <i class="bi bi-chat-left-text"></i> {{ task.description[:100] }}{% if task.description|length > 100 %}...{% endif %}
+        </p>
+        {% endif %}
+    </div>
+    {% if show_actions %}
+    <div class="card-footer">
+        <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn btn-sm btn-primary">
+            <i class="bi bi-eye"></i> View Details
+        </a>
+        {% if task.status != 'Completed' %}
+            {% if task.assigned_to_id is none and user.role in ['editorial', 'design'] %}
+            <form method="post" action="{{ url_for('tasks.pickup_task', task_id=task.id) }}" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-success">
+                    <i class="bi bi-hand-thumbs-up"></i> Pickup
+                </button>
+            </form>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro task_list_item(task, user) %}
+<a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="list-group-item list-group-item-action task-list-item">
+    <div class="d-flex w-100 justify-content-between align-items-start">
+        <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <h6 class="mb-0">
+                    <strong>#{{ task.id }}</strong> - {{ task.company_name or 'Untitled Task' }}
+                    {% if task.category %}
+                    <span class="badge bg-secondary ms-2">{{ task.category }}</span>
+                    {% endif %}
+                </h6>
+                <span class="badge bg-{{ 'success' if task.status == 'Completed' else 'warning' if task.status == 'In Progress' else 'primary' if task.status == 'Assigned' else 'secondary' }}">
+                    {{ task.status }}
+                </span>
+            </div>
+            <p class="mb-1 small text-muted">
+                <strong>Brand:</strong> {{ task.edition.brand.name if task.edition and task.edition.brand else (task.brand.name if task.brand else 'N/A') }}
+                | <strong>Created:</strong> {{ task.created_at.strftime('%Y-%m-%d') }}
+                {% if task.deadline %}
+                | <strong>Deadline:</strong> <span class="text-danger">{{ task.deadline.strftime('%Y-%m-%d') }}</span>
+                {% endif %}
+            </p>
+            {% if task.description %}
+            <p class="mb-0 small text-muted">{{ task.description[:80] }}{% if task.description|length > 80 %}...{% endif %}</p>
+            {% endif %}
+        </div>
+    </div>
+</a>
+{% endmacro %}

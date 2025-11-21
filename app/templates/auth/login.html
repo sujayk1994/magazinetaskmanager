@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Magazine Manager{% endblock %}
+
+{% block guest_content %}
+<div class="container">
+    <div class="row justify-content-center" style="min-height: 80vh; align-items: center;">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-circle"></i> Login to Magazine Manager</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Select a user to login (Development Mode)</p>
+                    
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Enter username" required>
+                            <small class="form-text text-muted">Or select from dropdown below</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="username_select" class="form-label">Quick Select User (Optional)</label>
+                            <select class="form-select" id="username_select" onchange="document.getElementById('username').value=this.value">
+                                <option value="">Choose a user...</option>
+                                <optgroup label="Sales Department">
+                                    {% for user in users if user.role == 'sales' %}
+                                    <option value="{{ user.username }}">{{ user.username }}{% if user.is_manager %} (Manager){% endif %}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                <optgroup label="Editorial Department">
+                                    {% for user in users if user.role == 'editorial' %}
+                                    <option value="{{ user.username }}">{{ user.username }}{% if user.is_manager %} (Manager){% endif %}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                <optgroup label="Design Department">
+                                    {% for user in users if user.role == 'design' %}
+                                    <option value="{{ user.username }}">{{ user.username }}{% if user.is_manager %} (Manager){% endif %}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                <optgroup label="CXO Department">
+                                    {% for user in users if user.role == 'cxo' %}
+                                    <option value="{{ user.username }}">{{ user.username }}{% if user.is_manager %} (Manager){% endif %}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                <optgroup label="Administration">
+                                    {% for user in users if user.role == 'super_admin' %}
+                                    <option value="{{ user.username }}">{{ user.username }} (Super Admin)</option>
+                                    {% endfor %}
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" value="password123" required>
+                            <small class="form-text text-muted">Default: password123</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+                    
+                    <div class="alert alert-info mb-0">
+                        <small>
+                            <strong><i class="bi bi-info-circle"></i> Test Credentials:</strong><br>
+                            <strong>Username:</strong> Any user from dropdown<br>
+                            <strong>Password:</strong> password123 (for all users)<br><br>
+                            <strong>Quick Access:</strong><br>
+                            • Sales: sales_manager, john_sales, mary_sales<br>
+                            • Editorial: editorial_manager, editor_jane, editor_mike, editor_lisa<br>
+                            • Design: design_manager, designer_sarah, designer_david, designer_amy<br>
+                            • CXO: ceo_john, cmo_sarah<br>
+                            • Admin: super_admin
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

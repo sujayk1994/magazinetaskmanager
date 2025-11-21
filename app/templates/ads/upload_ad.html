@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Ads - Magazine Manager{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <h2 class="mb-4"><i class="bi bi-upload"></i> Upload Ads</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="brand_id" class="form-label">Brand *</label>
+                    <select class="form-select" id="brand_id" name="brand_id" required>
+                        <option value="">Select Brand</option>
+                        {% for brand in brands %}
+                        <option value="{{ brand.id }}">{{ brand.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="edition_id" class="form-label">Edition (Optional)</label>
+                    <select class="form-select" id="edition_id" name="edition_id">
+                        <option value="none">No Edition (can assign later)</option>
+                        {% for edition in editions %}
+                        <option value="{{ edition.id }}">{{ edition.brand.name }} - {{ edition.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="files" class="form-label">Upload Ad Files *</label>
+                    <input type="file" class="form-control" id="files" name="files" multiple required>
+                    <small class="form-text text-muted">Allowed: PDF, Images (PNG, JPG), Design Files (PSD, AI, EPS)</small>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('ads.all_ads') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> Upload Ads
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

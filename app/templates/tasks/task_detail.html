@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Task #{{ task.id }} - Magazine Manager{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-file-text"></i> Task #{{ task.id }}</h2>
+        <a href="{{ url_for('tasks.all_tasks') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to All Tasks
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Task Details</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="150">Company:</th>
+                            <td>{{ task.company_name or 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Website:</th>
+                            <td>
+                                {% if task.company_website %}
+                                <a href="{{ task.company_website }}" target="_blank">{{ task.company_website }}</a>
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Brand:</th>
+                            <td>{{ task.edition.brand.name if task.edition else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Edition:</th>
+                            <td>{{ task.edition.name if task.edition else 'Unassigned' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Created By:</th>
+                            <td>{{ task.creator.username }} ({{ task.created_at.strftime('%Y-%m-%d %H:%M') }})</td>
+                        </tr>
+                        <tr>
+                            <th>Assigned To:</th>
+                            <td>{{ task.assigned_user.username if task.assigned_user else 'Unassigned' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Department:</th>
+                            <td><span class="badge bg-info">{{ task.current_department }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td>
+                                <span class="badge bg-{{ 'success' if task.status == 'completed' else 'primary' }}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Deadline:</th>
+                            <td>
+                                {% if task.deadline %}
+                                <span class="badge bg-warning">{{ task.deadline.strftime('%Y-%m-%d') }}</span>
+                                {% else %}
+                                No deadline set
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Priority:</th>
+                            <td><span class="badge bg-{{ 'danger' if task.priority == 'urgent' else 'warning' if task.priority == 'high' else 'secondary' }}">{{ task.priority }}</span></td>
+                        </tr>
+                    </table>
+                    
+                    {% if task.description %}
+                    <hr>
+                    <h6>Description:</h6>
+                    <p>{{ task.description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark"></i> Active Files ({{ files|length }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if files %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Filename</th>
+                                    <th>Uploaded By</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for file in files %}
+                                <tr>
+                                    <td><i class="bi bi-file-earmark"></i> {{ file.original_filename }}</td>
+                                    <td>{{ file.uploaded_by.username }}</td>
+                                    <td>{{ file.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('tasks.download_file', file_id=file.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-download"></i> Download
+                                        </a>
+                                        {% if user.role == 'super_admin' %}
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteFile({{ file.id }}, '{{ file.original_filename }}')">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No files uploaded yet.</p>
+                    {% endif %}
+
+                    <hr>
+                    <h6>Upload New Files</h6>
+                    <form method="POST" action="{{ url_for('tasks.upload_files', task_id=task.id) }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <input type="file" class="form-control" name="files" multiple>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" name="comment" placeholder="Add a comment..." rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-upload"></i> Upload Files
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Task History</h5>
+                </div>
+                <div class="card-body">
+                    {% if history %}
+                    <div class="timeline">
+                        {% for entry in history %}
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between">
+                                <strong><i class="bi bi-{{ 'file-earmark-arrow-up' if entry.action == 'Files Uploaded' else 'file-earmark-x' if entry.action == 'File Deleted' else 'clock-history' }}"></i> {{ entry.action }}</strong>
+                                <small class="text-muted">{{ entry.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">
+                                <small>By: {{ entry.user.username }}</small>
+                                {% if entry.from_department and entry.to_department %}
+                                <br><small>{{ entry.from_department }} → {{ entry.to_department }}</small>
+                                {% endif %}
+                            </p>
+                            {% if entry.comment %}
+                            <p class="mb-1"><em>"{{ entry.comment }}"</em></p>
+                            {% endif %}
+                            
+                            {% if entry.files.count() > 0 %}
+                            <div class="mt-2">
+                                <small class="text-muted"><strong>Files in this step:</strong></small>
+                                <ul class="list-unstyled ms-3 mt-1">
+                                    {% for file in entry.files.all() %}
+                                    <li class="mb-1">
+                                        <i class="bi bi-paperclip"></i> {{ file.original_filename }}
+                                        {% if file.is_deleted %}
+                                        <span class="badge bg-danger">Deleted</span>
+                                        {% else %}
+                                        <a href="{{ url_for('tasks.download_file', file_id=file.id) }}" class="btn btn-sm btn-outline-primary ms-2">
+                                            <i class="bi bi-download"></i> Download
+                                        </a>
+                                        {% endif %}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No history available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="card-body">
+                    {% if task.status != 'completed' %}
+                    
+                    {% if user.role in ['editorial', 'design'] and not user.is_manager %}
+                    
+                    {% if task.assigned_to_id == user.id %}
+                    
+                    <form method="POST" action="{{ url_for('tasks.send_back_to_manager', task_id=task.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Comment</label>
+                            <textarea class="form-control" name="comment" rows="2" placeholder="Send to manager for review..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 mb-2">
+                            <i class="bi bi-arrow-left-circle"></i> Send to Manager
+                        </button>
+                    </form>
+                    
+                    {% if user.department == 'editorial' and (task.editorial_owner_id == user.id or (not task.editorial_owner_id and task.current_department == 'editorial')) %}
+                    
+                    <form method="POST" action="{{ url_for('tasks.send_back_to_editor', task_id=task.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Comment</label>
+                            <textarea class="form-control" name="comment" rows="2" placeholder="Send to design..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-arrow-right"></i> Send to Design{% if task.design_owner %} ({{ task.design_owner.username }}){% endif %}
+                        </button>
+                    </form>
+                    
+                    <form method="POST" action="{{ url_for('tasks.send_to_sales', task_id=task.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Comment</label>
+                            <textarea class="form-control" name="comment" rows="2" placeholder="Send to sales for client feedback..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="bi bi-arrow-return-left"></i> Send to Sales ({{ task.creator.username }})
+                        </button>
+                    </form>
+                    
+                    {% elif user.department == 'design' and (task.design_owner_id == user.id or (not task.design_owner_id and task.current_department == 'design')) %}
+                    
+                    <form method="POST" action="{{ url_for('tasks.send_back_to_editor', task_id=task.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Comment</label>
+                            <textarea class="form-control" name="comment" rows="2" placeholder="Send back to editorial..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-arrow-left"></i> Send to Editorial{% if task.editorial_owner %} ({{ task.editorial_owner.username }}){% endif %}
+                        </button>
+                    </form>
+                    
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% else %}
+                    <form method="POST" action="{{ url_for('tasks.reassign_task', task_id=task.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Reassign To Department</label>
+                            <select class="form-select" name="department" required>
+                                <option value="">Select Department</option>
+                                <option value="editorial">Editorial</option>
+                                <option value="design">Design</option>
+                                <option value="sales">Sales</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Assign To User</label>
+                            <select class="form-select" name="assigned_to">
+                                <option value="">Select User</option>
+                                {% for user in editorial_users %}
+                                <option value="{{ user.id }}">{{ user.username }} (Editorial)</option>
+                                {% endfor %}
+                                {% for user in design_users %}
+                                <option value="{{ user.id }}">{{ user.username }} (Design)</option>
+                                {% endfor %}
+                                {% for user in sales_users %}
+                                <option value="{{ user.id }}">{{ user.username }} (Sales)</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Comment</label>
+                            <textarea class="form-control" name="comment" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="bi bi-arrow-repeat"></i> Reassign Task
+                        </button>
+                    </form>
+
+                    {% if task.assigned_to_id and user.is_manager %}
+                    <hr>
+                    <form method="POST" action="{{ url_for('tasks.assign_to_team', task_id=task.id) }}">
+                        <button type="submit" class="btn btn-info w-100" onclick="return confirm('Make this task available for anyone in the {{ task.current_department }} team to pick up?')">
+                            <i class="bi bi-people"></i> Assign to Team (Make Open)
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if user.role in ['sales', 'manager'] %}
+                    <hr>
+                    <form method="POST" action="{{ url_for('tasks.complete_task', task_id=task.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Completion Comment</label>
+                            <textarea class="form-control" name="comment" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Mark as Completed
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% else %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> This task is completed!
+                        {% if task.completed_at %}
+                        <br><small>Completed on: {{ task.completed_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteFile(fileId, filename) {
+    if (confirm(`Are you sure you want to delete "${filename}"?`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("tasks.delete_file", file_id=0) }}'.replace('/0', '/' + fileId);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

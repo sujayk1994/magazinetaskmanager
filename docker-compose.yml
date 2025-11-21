@@ -1,0 +1,41 @@
+version: '3.8'
+
+# Docker Compose configuration for Magazine Task Management System
+# Note: This is for deployment on platforms that support Docker
+# Replit uses Nix environment and does not support Docker
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: magazine_app
+      POSTGRES_USER: magazine_user
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-changeme123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U magazine_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 main:app
+    volumes:
+      - ./app/static/uploads:/app/app/static/uploads
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://magazine_user:${DATABASE_PASSWORD:-changeme123}@db:5432/magazine_app
+      SESSION_SECRET: ${SESSION_SECRET:-dev-secret-change-in-production}
+      FLASK_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

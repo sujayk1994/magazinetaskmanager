@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ edition.name }} - Magazine Manager{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-book"></i> {{ edition.brand.name }} - {{ edition.name }}</h2>
+        <a href="{{ url_for('magazines.all_magazines') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to All Magazines
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Edition Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Brand:</strong> {{ edition.brand.name }}</p>
+                    <p><strong>Edition:</strong> {{ edition.name }}</p>
+                    {% if edition.year and edition.month %}
+                    <p><strong>Date:</strong> {{ edition.month }}/{{ edition.year }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Status:</strong>
+                        <span class="badge bg-{{ 'success' if edition.status == 'Shipped' else 'warning' if edition.status == 'Ongoing' else 'secondary' }}">
+                            {{ edition.status }}
+                        </span>
+                    </p>
+                    <p><strong>Total Tasks:</strong> {{ tasks|length }}</p>
+                    <p><strong>Completed Tasks:</strong> {{ tasks|selectattr('status', 'equalto', 'completed')|list|length }}</p>
+                </div>
+            </div>
+
+            {% if user.role in ['design', 'manager'] %}
+            <hr>
+            <form method="POST" action="{{ url_for('magazines.update_edition_status', edition_id=edition.id) }}" class="row align-items-end">
+                <div class="col-md-6">
+                    <label for="status" class="form-label">Update Edition Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="Scheduled" {% if edition.status == 'Scheduled' %}selected{% endif %}>Scheduled</option>
+                        <option value="Ongoing" {% if edition.status == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+                        <option value="Hold" {% if edition.status == 'Hold' %}selected{% endif %}>Hold</option>
+                        <option value="Canceled" {% if edition.status == 'Canceled' %}selected{% endif %}>Canceled</option>
+                        <option value="Completed" {% if edition.status == 'Completed' %}selected{% endif %}>Completed</option>
+                        <option value="Online" {% if edition.status == 'Online' %}selected{% endif %}>Online</option>
+                        <option value="Printed" {% if edition.status == 'Printed' %}selected{% endif %}>Printed</option>
+                        <option value="Shipped" {% if edition.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-arrow-repeat"></i> Update Status
+                    </button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Tasks in This Edition</h5>
+        </div>
+        <div class="card-body">
+            {% if tasks %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Task ID</th>
+                            <th>Company</th>
+                            <th>Assigned To</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Deadline</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <td><strong>#{{ task.id }}</strong></td>
+                            <td>{{ task.company_name or 'N/A' }}</td>
+                            <td>{{ task.assigned_user.username if task.assigned_user else 'Unassigned' }}</td>
+                            <td><span class="badge bg-info">{{ task.current_department }}</span></td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if task.status == 'completed' else 'primary' }}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if task.deadline %}
+                                {{ task.deadline.strftime('%Y-%m-%d') }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No tasks in this edition yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

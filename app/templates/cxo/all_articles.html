@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}CXO Articles{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-journal-richtext"></i> CXO Articles</h2>
+                    <p class="text-muted">Manage and track CXO-submitted articles</p>
+                </div>
+                {% if user.role == 'cxo' %}
+                <a href="{{ url_for('cxo.upload_article') }}" class="btn btn-primary">
+                    <i class="bi bi-cloud-upload"></i> Upload New Article
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="brand" class="form-label">Brand</label>
+                            <select class="form-select" id="brand" name="brand">
+                                <option value="">All Brands</option>
+                                {% for brand in brands %}
+                                <option value="{{ brand.id }}" {% if request.args.get('brand') == brand.id|string %}selected{% endif %}>{{ brand.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edition" class="form-label">Edition</label>
+                            <select class="form-select" id="edition" name="edition">
+                                <option value="">All Editions</option>
+                                {% for edition in editions %}
+                                <option value="{{ edition.id }}" {% if request.args.get('edition') == edition.id|string %}selected{% endif %}>{{ edition.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="">All Statuses</option>
+                                {% for status in statuses %}
+                                <option value="{{ status }}" {% if request.args.get('status') == status %}selected{% endif %}>{{ status }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if articles %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Brand</th>
+                            <th>Company Name</th>
+                            <th>Edition</th>
+                            <th>Status</th>
+                            <th>Uploaded By</th>
+                            <th>Uploaded Date</th>
+                            <th>Assigned to</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for article in articles %}
+                        <tr {% if article.is_archived %}class="table-secondary clickable-row"{% else %}class="clickable-row"{% endif %} onclick="window.location='{{ url_for('cxo.article_detail', article_id=article.id) }}';" style="cursor: pointer;">
+                            <td><strong>#{{ article.id }}</strong></td>
+                            <td>
+                                <span class="badge bg-info">{{ article.brand.name }}</span>
+                            </td>
+                            <td>{{ article.company_name }}</td>
+                            <td>
+                                {% if article.edition %}
+                                {{ article.edition.name }}
+                                {% else %}
+                                <span class="text-muted">{{ article.edition_other or 'N/A' }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if article.is_used %}
+                                <span class="badge bg-secondary">Used</span>
+                                {% elif article.status == 'Pending' %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif article.status == 'Approved' %}
+                                <span class="badge bg-success">Approved</span>
+                                {% elif article.status == 'Rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                                {% elif article.status == 'Designing' %}
+                                <span class="badge bg-info">Designing</span>
+                                {% elif article.status == 'Design Ready' %}
+                                <span class="badge bg-primary">Design Ready</span>
+                                {% else %}
+                                <span class="badge bg-light text-dark">{{ article.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ article.uploaded_by.username if article.uploaded_by else 'N/A' }}</td>
+                            <td>{{ article.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ article.assigned_to.username if article.assigned_to else 'Unassigned' }}</td>
+                            <td>
+                                <a href="{{ url_for('cxo.article_detail', article_id=article.id) }}" class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation();">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> No articles found. 
+                {% if user.role == 'cxo' %}
+                <a href="{{ url_for('cxo.upload_article') }}">Upload your first article</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

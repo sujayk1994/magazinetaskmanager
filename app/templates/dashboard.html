@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Magazine Manager{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <h2 class="mb-4">Dashboard - {{ user.role|capitalize }} Department</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-list-check"></i> My To-Do Tasks (Recent 5)</h5>
+                    <a href="{{ url_for('tasks.my_tasks') }}" class="btn btn-light btn-sm">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if todo_tasks %}
+                    <div class="list-group">
+                        {% for task in todo_tasks %}
+                        <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Task #{{ task.id }} - {{ task.company_name or 'Untitled' }}</h6>
+                                <small>
+                                    {% if task.deadline %}
+                                    <span class="badge bg-warning">Due: {{ task.deadline.strftime('%Y-%m-%d') }}</span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <p class="mb-1 text-truncate">{{ task.description or 'No description' }}</p>
+                            <small>Assigned by: {{ task.original_requester.username if task.original_requester else task.creator.username }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-3 text-center">
+                        <a href="{{ url_for('tasks.my_tasks') }}" class="btn btn-outline-primary">View All Todo Tasks</a>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No tasks in your to-do list.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if user.department == 'editorial' and pending_articles %}
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-journal-richtext"></i> Article Approval ({{ pending_articles|length }})</h5>
+                    <a href="{{ url_for('cxo.all_articles') }}?status=Pending" class="btn btn-light btn-sm">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for article in pending_articles %}
+                        <a href="{{ url_for('cxo.article_detail', article_id=article.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">
+                                    {% if article.task_id %}<span class="badge bg-primary me-2">Task #{{ article.task_id }}</span>{% endif %}
+                                    {{ article.company_name }}
+                                </h6>
+                                <small>
+                                    <span class="badge bg-warning text-dark">Pending Review</span>
+                                </small>
+                            </div>
+                            <p class="mb-1 text-truncate">
+                                {% if article.brand %}<strong>Brand:</strong> {{ article.brand.name }}{% endif %}
+                                {% if article.edition %} | <strong>Edition:</strong> {{ article.edition.name }}{% endif %}
+                            </p>
+                            <small>Uploaded by: {{ article.uploaded_by.username }} on {{ article.uploaded_at.strftime('%Y-%m-%d') }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-3 text-center">
+                        <a href="{{ url_for('cxo.all_articles') }}?status=Pending" class="btn btn-outline-warning">View All Pending Articles</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if user.department == 'design' %}
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-inbox"></i> Open Tasks ({{ open_tasks|length }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if open_tasks %}
+                    <div class="list-group">
+                        {% for task in open_tasks %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">
+                                        <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}">Task #{{ task.id }} - {{ task.company_name or 'Untitled' }}</a>
+                                    </h6>
+                                    <p class="mb-1 text-truncate">{{ task.description or 'No description' }}</p>
+                                    <small>
+                                        Created by: {{ task.creator.username }}
+                                        {% if task.deadline %}
+                                        | <span class="badge bg-warning">Due: {{ task.deadline.strftime('%Y-%m-%d') }}</span>
+                                        {% endif %}
+                                        {% if task.priority == 'high' %}
+                                        <span class="badge bg-danger">High Priority</span>
+                                        {% elif task.priority == 'urgent' %}
+                                        <span class="badge bg-danger">Urgent</span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <div class="btn-group ms-2" role="group">
+                                    <form method="POST" action="{{ url_for('tasks.pickup_task', task_id=task.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-hand-thumbs-up"></i> Pick Up
+                                        </button>
+                                    </form>
+                                    {% if user.is_manager and design_team %}
+                                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                        <span class="visually-hidden">Assign to</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><h6 class="dropdown-header">Assign to Team Member</h6></li>
+                                        {% for member in design_team %}
+                                        <li>
+                                            <form method="POST" action="{{ url_for('tasks.assign_to_member', task_id=task.id) }}">
+                                                <input type="hidden" name="member_id" value="{{ member.id }}">
+                                                <button type="submit" class="dropdown-item">{{ member.username }}</button>
+                                            </form>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No open tasks available for pickup at the moment.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar3"></i> Upcoming Deadlines</h5>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_deadlines %}
+                    <ul class="list-unstyled">
+                        {% for task in upcoming_deadlines %}
+                        <li class="mb-2">
+                            <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}">
+                                <strong>{{ task.company_name or 'Task #' + task.id|string }}</strong>
+                            </a>
+                            - <span class="badge bg-warning">{{ task.deadline.strftime('%Y-%m-%d') }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No upcoming deadlines.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-bell"></i> Notifications</h5>
+                </div>
+                <div class="card-body">
+                    {% if notifications %}
+                    <ul class="list-unstyled">
+                        {% for notification in notifications %}
+                        <li class="mb-2 pb-2 border-bottom">
+                            <small class="text-muted">{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            <p class="mb-0">{{ notification.message }}</p>
+                            {% if notification.task %}
+                            <a href="{{ url_for('tasks.task_detail', task_id=notification.task_id) }}" class="small">View Task</a>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No new notifications.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Tasks</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_tasks %}
+                    <ul class="list-unstyled">
+                        {% for task in recent_tasks %}
+                        <li class="mb-2">
+                            <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}">
+                                Task #{{ task.id }}
+                            </a>
+                            <span class="badge bg-{{ 'success' if task.status == 'completed' else 'info' }}">
+                                {{ task.status }}
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No recent tasks.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
