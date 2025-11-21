@@ -1,0 +1,195 @@
+@sujayk1994 ➜ /workspaces/magazinetaskmanager (main) $ chmod +x startup.sh
+@sujayk1994 ➜ /workspaces/magazinetaskmanager (main) $ ./startup.sh
+========================================
+Magazine Task Management System Startup
+========================================
+
+📦 Installing Python dependencies...
+Requirement already satisfied: flask>=3.1.2 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 1)) (3.1.2)
+Requirement already satisfied: flask-dance>=7.1.0 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (7.1.0)
+Requirement already satisfied: flask-login>=0.6.3 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (0.6.3)
+Requirement already satisfied: flask-migrate>=4.1.0 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (4.1.0)
+Requirement already satisfied: flask-sqlalchemy>=3.1.1 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (3.1.1)
+Requirement already satisfied: flask-wtf>=1.2.2 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 6)) (1.2.2)
+Requirement already satisfied: oauthlib>=3.3.1 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 7)) (3.3.1)
+Requirement already satisfied: psycopg2-binary>=2.9.11 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 8)) (2.9.11)
+Requirement already satisfied: pyjwt>=2.10.1 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 9)) (2.10.1)
+Requirement already satisfied: python-dotenv>=1.2.1 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 10)) (1.2.1)
+Requirement already satisfied: werkzeug>=3.0.1 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 11)) (3.1.3)
+Requirement already satisfied: gunicorn>=21.2.0 in /home/codespace/.local/lib/python3.12/site-packages (from -r requirements.txt (line 12)) (23.0.0)
+Requirement already satisfied: blinker>=1.9.0 in /home/codespace/.local/lib/python3.12/site-packages (from flask>=3.1.2->-r requirements.txt (line 1)) (1.9.0)
+Requirement already satisfied: click>=8.1.3 in /home/codespace/.local/lib/python3.12/site-packages (from flask>=3.1.2->-r requirements.txt (line 1)) (8.3.1)
+Requirement already satisfied: itsdangerous>=2.2.0 in /home/codespace/.local/lib/python3.12/site-packages (from flask>=3.1.2->-r requirements.txt (line 1)) (2.2.0)
+Requirement already satisfied: jinja2>=3.1.2 in /home/codespace/.local/lib/python3.12/site-packages (from flask>=3.1.2->-r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: markupsafe>=2.1.1 in /home/codespace/.local/lib/python3.12/site-packages (from flask>=3.1.2->-r requirements.txt (line 1)) (3.0.3)
+Requirement already satisfied: requests>=2.0 in /home/codespace/.local/lib/python3.12/site-packages (from flask-dance>=7.1.0->-r requirements.txt (line 2)) (2.32.5)
+Requirement already satisfied: requests-oauthlib>=1.0.0 in /home/codespace/.local/lib/python3.12/site-packages (from flask-dance>=7.1.0->-r requirements.txt (line 2)) (2.0.0)
+Requirement already satisfied: urlobject in /home/codespace/.local/lib/python3.12/site-packages (from flask-dance>=7.1.0->-r requirements.txt (line 2)) (3.0.0)
+Requirement already satisfied: alembic>=1.9.0 in /home/codespace/.local/lib/python3.12/site-packages (from flask-migrate>=4.1.0->-r requirements.txt (line 4)) (1.17.2)
+Requirement already satisfied: sqlalchemy>=2.0.16 in /home/codespace/.local/lib/python3.12/site-packages (from flask-sqlalchemy>=3.1.1->-r requirements.txt (line 5)) (2.0.44)
+Requirement already satisfied: wtforms in /home/codespace/.local/lib/python3.12/site-packages (from flask-wtf>=1.2.2->-r requirements.txt (line 6)) (3.2.1)
+Requirement already satisfied: packaging in /home/codespace/.local/lib/python3.12/site-packages (from gunicorn>=21.2.0->-r requirements.txt (line 12)) (25.0)
+Requirement already satisfied: Mako in /home/codespace/.local/lib/python3.12/site-packages (from alembic>=1.9.0->flask-migrate>=4.1.0->-r requirements.txt (line 4)) (1.3.10)
+Requirement already satisfied: typing-extensions>=4.12 in /home/codespace/.local/lib/python3.12/site-packages (from alembic>=1.9.0->flask-migrate>=4.1.0->-r requirements.txt (line 4)) (4.15.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in /home/codespace/.local/lib/python3.12/site-packages (from requests>=2.0->flask-dance>=7.1.0->-r requirements.txt (line 2)) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in /home/codespace/.local/lib/python3.12/site-packages (from requests>=2.0->flask-dance>=7.1.0->-r requirements.txt (line 2)) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /home/codespace/.local/lib/python3.12/site-packages (from requests>=2.0->flask-dance>=7.1.0->-r requirements.txt (line 2)) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/codespace/.local/lib/python3.12/site-packages (from requests>=2.0->flask-dance>=7.1.0->-r requirements.txt (line 2)) (2025.10.5)
+Requirement already satisfied: greenlet>=1 in /home/codespace/.local/lib/python3.12/site-packages (from sqlalchemy>=2.0.16->flask-sqlalchemy>=3.1.1->-r requirements.txt (line 5)) (3.2.4)
+✅ Dependencies installed
+
+📁 Creating upload directories...
+✅ Upload directories ready
+
+🗄️  Setting up database migrations...
+✅ Migrations initialized
+
+📊 Running database migrations...
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/codespace/.local/lib/python3.12/site-packages/flask/__main__.py", line 3, in <module>
+    main()
+  File "/home/codespace/.local/lib/python3.12/site-packages/flask/cli.py", line 1131, in main
+    cli.main()
+  File "/home/codespace/.local/lib/python3.12/site-packages/click/core.py", line 1406, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/click/core.py", line 1873, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/click/core.py", line 1873, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/click/core.py", line 1269, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/click/core.py", line 824, in invoke
+    return callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/click/decorators.py", line 34, in new_func
+    return f(get_current_context(), *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/flask/cli.py", line 400, in decorator
+    return ctx.invoke(f, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/click/core.py", line 824, in invoke
+    return callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/flask_migrate/cli.py", line 157, in upgrade
+    _upgrade(directory or g.directory, revision, sql, tag, x_arg or g.x_arg)
+  File "/home/codespace/.local/lib/python3.12/site-packages/flask_migrate/__init__.py", line 111, in wrapped
+    f(*args, **kwargs)
+  File "/home/codespace/.local/lib/python3.12/site-packages/flask_migrate/__init__.py", line 200, in upgrade
+    command.upgrade(config, revision, sql=sql, tag=tag)
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/command.py", line 483, in upgrade
+    script.run_env()
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/script/base.py", line 545, in run_env
+    util.load_python_file(self.dir, "env.py")
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+    module = load_module_py(module_id, path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+    spec.loader.exec_module(module)  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 994, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspaces/magazinetaskmanager/migrations/env.py", line 113, in <module>
+    run_migrations_online()
+  File "/workspaces/magazinetaskmanager/migrations/env.py", line 107, in run_migrations_online
+    context.run_migrations()
+  File "<string>", line 8, in run_migrations
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/runtime/environment.py", line 946, in run_migrations
+    self.get_context().run_migrations(**kw)
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/runtime/migration.py", line 627, in run_migrations
+    step.migration_fn(**kw)
+  File "/workspaces/magazinetaskmanager/migrations/versions/be5bbf15a53f_add_task_id_to_cxo_articles.py", line 21, in upgrade
+    with op.batch_alter_table('cxo_articles', schema=None) as batch_op:
+  File "/usr/local/python/3.12.1/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/operations/base.py", line 410, in batch_alter_table
+    impl.flush()
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/operations/batch.py", line 161, in flush
+    fn(*arg, **kw)
+  File "/home/codespace/.local/lib/python3.12/site-packages/alembic/operations/batch.py", line 670, in add_constraint
+    raise ValueError("Constraint must have a name")
+ValueError: Constraint must have a name
+✅ Database is up to date
+
+🌱 Checking if database needs seeding...
+Database is empty. Seeding with sample data...
+Clearing existing data...
+Creating users with managers...
+Traceback (most recent call last):
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2118, in _exec_insertmany_context
+    dialect.do_execute(
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: table users has no column named password
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/magazinetaskmanager/seed_comprehensive_with_managers.py", line 365, in <module>
+    seed_comprehensive_data()
+  File "/workspaces/magazinetaskmanager/seed_comprehensive_with_managers.py", line 53, in seed_comprehensive_data
+    db.session.commit()
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 597, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2030, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1311, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1286, in _prepare_impl
+    self.session.flush()
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4331, in flush
+    self._flush(objects)
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4466, in _flush
+    with util.safe_reraise():
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4427, in _flush
+    flush_context.execute()
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1143, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1844, in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2126, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2118, in _exec_insertmany_context
+    dialect.do_execute(
+  File "/home/codespace/.local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) table users has no column named password
+[SQL: INSERT INTO users (replit_user_id, username, email, password, role, department, is_manager, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('super_admin_1', 'super_admin', 'admin@magazine.com', 'scrypt:32768:8:1$R7u08wCYbFpqcmqw$c9c0a50530607a28b0f4bf5ae6b3af9a7319cb0f08370373a358532bb8ea9e1b8353230ffb3d0ea21169460afc140a8b83090a953df90e733b109dfa41371bb0', 'super_admin', 'admin', 1, '2025-11-21 22:29:29.620965')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+@sujayk1994 ➜ /workspaces/magazinetaskmanager (main) $ 
